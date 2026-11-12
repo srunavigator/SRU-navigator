@@ -1,0 +1,1807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SR University Multi-Block Campus Navigator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <style>
+    :root {
+      --bg-dark: #080d17;
+      --card-bg: #0f172a;
+      --card-border: #1e293b;
+      --accent-cyan: #00f2fe;
+      --accent-blue: #38bdf8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --block-bg: #0c162c;
+      --block-border: #1e3a6e;
+      --room-bg: #13223f;
+      --room-border: #234175;
+      --room-hover: #1c3563;
+      --road-fill: #0d1629;
+      --road-stroke: #1e2f52;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      padding: 14px 18px;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-icon {
+      background: linear-gradient(135deg, #0072ff, #00c6ff);
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(0, 198, 255, 0.25);
+    }
+
+    .title-sub {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent-cyan);
+      font-weight: 800;
+    }
+
+    .title-main {
+      font-size: 21px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-action {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-action:hover {
+      border-color: var(--accent-cyan);
+      background: #17233c;
+    }
+
+    /* Controls Bar */
+    .controls-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 14px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: flex-end;
+      margin-bottom: 14px;
+    }
+
+    .select-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+      min-width: 230px;
+    }
+
+    .select-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .select-label .dot-green {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #10b981;
+      display: inline-block;
+    }
+
+    .select-label .dot-red {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #ef4444;
+      display: inline-block;
+    }
+
+    select {
+      background: #070d1a;
+      border: 1px solid var(--card-border);
+      color: #fff;
+      padding: 9px 12px;
+      border-radius: 9px;
+      font-size: 13px;
+      font-weight: 500;
+      outline: none;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    select:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    .swap-btn {
+      background: #070d1a;
+      border: 1px solid var(--card-border);
+      color: var(--accent-cyan);
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+
+    .swap-btn:hover {
+      border-color: var(--accent-cyan);
+      background: #14223d;
+    }
+
+    .quick-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+      width: 100%;
+      padding-top: 4px;
+      border-top: 1px solid rgba(30, 41, 59, 0.7);
+    }
+
+    .quick-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      margin-right: 4px;
+    }
+
+    .chip-btn {
+      background: #070d1a;
+      border: 1px solid var(--card-border);
+      color: #cbd5e1;
+      padding: 5px 11px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .chip-btn:hover {
+      border-color: var(--accent-cyan);
+      color: #fff;
+      background: #13223f;
+    }
+
+    /* Main Content Grid */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+    }
+
+    @media (max-width: 1024px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .map-container {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .map-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .map-badge {
+      padding: 5px 11px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #10b981;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .map-target-badge {
+      margin-left: 6px;
+      background: rgba(0, 242, 254, 0.12);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      color: var(--accent-cyan);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .svg-wrapper {
+      width: 100%;
+      height: 700px;
+      background: #050811;
+      border-radius: 12px;
+      border: 1px solid #142036;
+      overflow: hidden;
+      cursor: grab;
+      position: relative;
+      touch-action: none;
+    }
+
+    .svg-wrapper:active {
+      cursor: grabbing;
+    }
+
+    /* Camera & Zoom Toolbar */
+    .zoom-toolbar {
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 20;
+    }
+
+    .zoom-btn {
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid #283854;
+      color: #f8fafc;
+      padding: 0 11px;
+      min-width: 38px;
+      height: 36px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+    }
+
+    .zoom-btn:hover {
+      border-color: var(--accent-cyan);
+      background: #1e293b;
+      color: var(--accent-cyan);
+    }
+
+    /* SVG Blueprint Elements */
+    svg text {
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .road-corridor {
+      fill: var(--road-fill);
+      stroke: var(--road-stroke);
+      stroke-width: 2;
+    }
+
+    .road-center-line {
+      stroke: #1b2d4d;
+      stroke-width: 1.5;
+      stroke-dasharray: 8, 8;
+      fill: none;
+    }
+
+    .block-hull {
+      fill: var(--block-bg);
+      stroke: var(--block-border);
+      stroke-width: 2.2;
+      transition: stroke 0.2s, fill 0.2s;
+    }
+
+    .clickable-block {
+      cursor: pointer;
+    }
+
+    .clickable-block:hover .block-hull {
+      stroke: var(--accent-cyan);
+      fill: #102040;
+    }
+
+    .room {
+      fill: var(--room-bg);
+      stroke: var(--room-border);
+      stroke-width: 1.5;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .room:hover {
+      fill: var(--room-hover);
+      stroke: var(--accent-cyan);
+    }
+
+    .room.active-dest,
+    .clickable-block.active-dest .block-hull {
+      stroke: var(--accent-cyan);
+      stroke-width: 3;
+      filter: drop-shadow(0 0 10px rgba(0, 242, 254, 0.45));
+    }
+
+    .room-label {
+      fill: #f1f5f9;
+      font-size: 11px;
+      font-weight: 800;
+      text-anchor: middle;
+    }
+
+    .room-sub {
+      fill: #94a3b8;
+      font-size: 8px;
+      text-anchor: middle;
+    }
+
+    .tiny-label {
+      fill: #94a3b8;
+      font-size: 7.5px;
+      font-weight: 700;
+      text-anchor: middle;
+    }
+
+    .block-title-text {
+      fill: #ffffff;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-anchor: middle;
+    }
+
+    .staircase {
+      fill: #0a1426;
+      stroke: #3b82f6;
+      stroke-width: 1.3;
+      cursor: pointer;
+    }
+
+    .stair-label {
+      fill: #60a5fa;
+      font-size: 9px;
+      font-weight: 700;
+      text-anchor: middle;
+    }
+
+    /* Directional Arrows */
+    .corridor-arrow-line {
+      fill: none;
+      stroke: #e2e8f0;
+      stroke-width: 2;
+      stroke-linecap: round;
+    }
+
+    .corridor-arrow-head {
+      fill: #e2e8f0;
+    }
+
+    .guide-arrow-outline {
+      fill: rgba(56, 189, 248, 0.14);
+      stroke: #38bdf8;
+      stroke-width: 1.6;
+      stroke-linejoin: round;
+    }
+
+    /* Animated Route Overlay */
+    .nav-path-glow {
+      stroke: rgba(0, 242, 254, 0.28);
+      stroke-width: 12;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .nav-path-core {
+      stroke: var(--accent-cyan);
+      stroke-width: 4.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+      stroke-dasharray: 10, 10;
+      animation: flowPath 1.1s linear infinite;
+    }
+
+    @keyframes flowPath {
+      from {
+        stroke-dashoffset: 40;
+      }
+      to {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    .start-marker {
+      fill: #10b981;
+      stroke: #ffffff;
+      stroke-width: 2.5;
+      filter: drop-shadow(0 0 8px #10b981);
+    }
+
+    .dest-marker {
+      fill: #ef4444;
+      stroke: #ffffff;
+      stroke-width: 2.5;
+      filter: drop-shadow(0 0 8px #ef4444);
+    }
+
+    /* Guidance Panel */
+    .guide-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .guide-title {
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .guide-summary {
+      font-size: 13px;
+      color: var(--accent-cyan);
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .metric-tiles {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .metric-tile {
+      background: #070d1a;
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+
+    .metric-name {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .metric-value {
+      font-size: 19px;
+      font-weight: 800;
+      color: #38bdf8;
+    }
+
+    .steps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 430px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .step-item {
+      background: #070d1a;
+      border: 1px solid var(--card-border);
+      border-radius: 9px;
+      padding: 10px 12px;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: #cbd5e1;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      background: rgba(0, 242, 254, 0.14);
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 242, 254, 0.35);
+      min-width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-title">
+      <div class="brand-icon"><i class="fa-solid fa-location-arrow"></i></div>
+      <div>
+        <div class="title-sub">SR University Wayfinder</div>
+        <div class="title-main">SR University Multi-Block Campus Navigator</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-action" onclick="resetAll()"><i class="fa-solid fa-rotate-left"></i> Reset Route</button>
+      <button class="btn-action" onclick="resetPanZoom()"><i class="fa-solid fa-expand"></i> Fit Full Map</button>
+    </div>
+  </header>
+
+  <div class="controls-card">
+    <div class="select-group">
+      <label class="select-label"><span class="dot-green"></span> Start Location:</label>
+      <select id="startSelect" onchange="calculateRoute()">
+        <optgroup label="Main Gates & Campus Roads">
+          <option value="main_gate" selected>SR University Main Gate</option>
+          <option value="check_post">Check Post</option>
+          <option value="sru_circle">SR University Circle</option>
+        </optgroup>
+        <optgroup label="SRIX Block">
+          <option value="srix_main_entrance">SRIX Block Main Entrance (SE Steps)</option>
+          <option value="srix_second_entrance">SRIX Block Second Entrance (SW)</option>
+          <option value="srix_canteen">SRIX Canteen</option>
+          <option value="srix_principle">SRIX Principle Cabin</option>
+          <option value="srix_spd_lab">SRIX SPD Lab</option>
+        </optgroup>
+        <optgroup label="Block 8 (Academic Block)">
+          <option value="b8_main_entrance">Block 8 Main Entrance (Bottom)</option>
+          <option value="r8001">8001 Computer Lab</option>
+          <option value="r8002">8002 Computer Lab</option>
+          <option value="r8003">8003 Computer Lab</option>
+          <option value="r8004">8004 Classroom</option>
+          <option value="b8_stair1">Block 8 Staircase 1</option>
+          <option value="b8_stair2">Block 8 Staircase 2</option>
+        </optgroup>
+        <optgroup label="Block 11">
+          <option value="b11_main_entrance">Block 11 Entrance (11003 &amp; 11004)</option>
+          <option value="r11001">11001 Computer Lab</option>
+          <option value="r11004">11004 Classroom</option>
+          <option value="r11005">Room 11005</option>
+        </optgroup>
+        <optgroup label="Block 10 & Other Blocks">
+          <option value="b10_gate">10 Block West Gate</option>
+          <option value="b10_center">10 Block Central Wing</option>
+          <option value="lib9_entrance">Library 9 Block Entrance</option>
+          <option value="ece_entrance">SR University ECE Block</option>
+          <option value="admin_entrance">Administration Block Entrance</option>
+          <option value="block_3">SR University 3rd Block</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <button class="swap-btn" title="Swap Start & Destination" onclick="swapLocations()">
+      <i class="fa-solid fa-right-left"></i>
+    </button>
+
+    <div class="select-group">
+      <label class="select-label"><span class="dot-red"></span> Destination Room / Block:</label>
+      <select id="destSelect" onchange="calculateRoute()">
+        <optgroup label="Block 8 Rooms">
+          <option value="r8005" selected>Room 8005</option>
+          <option value="r8001">8001 Computer Lab</option>
+          <option value="r8002">8002 Computer Lab</option>
+          <option value="r8003">8003 Computer Lab</option>
+          <option value="r8004">8004 Classroom</option>
+          <option value="r8006">Room 8006</option>
+          <option value="r8007">Room 8007</option>
+          <option value="r8008">Room 8008</option>
+          <option value="b8_girls_washroom">Girls Washroom (Block 8)</option>
+          <option value="b8_boys_washroom">Boys Washroom (Block 8)</option>
+          <option value="b8_drinking_water">Drinking Water (Block 8)</option>
+        </optgroup>
+        <optgroup label="Block 11 Rooms">
+          <option value="r11005">Room 11005</option>
+          <option value="r11001">11001 Computer Lab</option>
+          <option value="r11002">11002 Computer Lab</option>
+          <option value="r11003">11003 Computer Lab</option>
+          <option value="r11004">11004 Classroom</option>
+          <option value="r11006">Room 11006</option>
+          <option value="r11007">Room 11007</option>
+          <option value="r11008">Room 11008</option>
+          <option value="b11_girls_washroom">Girls Washroom (Block 11)</option>
+          <option value="b11_boys_washroom">Boys Washroom (Block 11)</option>
+          <option value="b11_drinking_water">Drinking Water (Block 11)</option>
+        </optgroup>
+        <optgroup label="SRIX Block Rooms">
+          <option value="srix_canteen">SRIX Canteen</option>
+          <option value="srix_dining">SRIX Staff Dining Hall</option>
+          <option value="srix_principle">SRIX Principle Cabin</option>
+          <option value="srix_office">SRIX Office Cabin</option>
+          <option value="srix_spd_lab">SRIX SPD Lab</option>
+          <option value="srix_workshop">SRIX Workshop</option>
+          <option value="srix_boys_wr">SRIX Boys Washroom</option>
+          <option value="srix_girls_wr">SRIX Girls Washroom</option>
+        </optgroup>
+        <optgroup label="Block 10 & Campus Blocks">
+          <option value="b10_center">10 Block Central Wing</option>
+          <option value="b10_gate">10 Block West Gate</option>
+          <option value="lib9_library">Library (Library 9 Block)</option>
+          <option value="lib9_amphi">Amphi Sitting Area (Library 9)</option>
+          <option value="ece_entrance">SR University ECE Block</option>
+          <option value="admin_block_main">Administration Block</option>
+          <option value="admin_block_1st">Administration Block 1st Block</option>
+          <option value="block_3">SR University 3rd Block</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="quick-chips">
+      <span class="quick-label">Quick Destinations:</span>
+      <button class="chip-btn" onclick="quickNav('r8005')">Room 8005</button>
+      <button class="chip-btn" onclick="quickNav('r11005')">Room 11005</button>
+      <button class="chip-btn" onclick="quickNav('b10_center')">10 Block</button>
+      <button class="chip-btn" onclick="quickNav('srix_canteen')">SRIX Canteen</button>
+      <button class="chip-btn" onclick="quickNav('srix_spd_lab')">SRIX SPD Lab</button>
+      <button class="chip-btn" onclick="quickNav('lib9_library')">Library 9 Block</button>
+      <button class="chip-btn" onclick="quickNav('admin_block_main')">Admin Block</button>
+      <button class="chip-btn" onclick="quickNav('ece_entrance')">ECE Block</button>
+    </div>
+  </div>
+
+  <div class="content-grid">
+    <!-- Interactive Campus Map -->
+    <div class="map-container">
+      <div class="map-header">
+        <div>
+          <span class="map-badge"><i class="fa-solid fa-circle"></i> Live Campus Map</span>
+          <span class="map-target-badge" id="targetBadge">Target: Room 8005</span>
+        </div>
+        <span style="font-size: 12px; color: var(--text-muted);">
+          <i class="fa-solid fa-hand-pointer"></i> Click any room/block • Drag to pan • Scroll to zoom
+        </span>
+      </div>
+
+      <div class="svg-wrapper" id="svgViewport">
+        <!-- Camera Toolbar -->
+        <div class="zoom-toolbar">
+          <button class="zoom-btn" title="Zoom In" onclick="adjustZoom(1.2)"><i class="fa-solid fa-plus"></i></button>
+          <button class="zoom-btn" title="Zoom Out" onclick="adjustZoom(0.84)"><i class="fa-solid fa-minus"></i></button>
+          <button class="zoom-btn" title="Full Campus" onclick="resetPanZoom()"><i class="fa-solid fa-expand"></i> Full Campus</button>
+          <button class="zoom-btn" title="Focus SRIX Block" onclick="focusCamera(-480, -390, 1.55)">Focus SRIX</button>
+          <button class="zoom-btn" title="Focus Block 8" onclick="focusCamera(-1150, -30, 1.55)">Focus Block 8</button>
+          <button class="zoom-btn" title="Focus 8, 10 & 11 Blocks" onclick="focusCamera(-1050, -60, 1.28)">Focus 8/10/11</button>
+        </div>
+
+        <svg id="campusMap" viewBox="0 0 2150 1650" width="100%" height="100%">
+          <defs>
+            <marker id="navArrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#00f2fe" />
+            </marker>
+          </defs>
+
+          <g id="mapPanGroup" transform="matrix(1 0 0 1 0 0)">
+            <!-- =================================================================== -->
+            <!-- 1. CAMPUS ARTERIAL ROADS & CORRIDOR AVENUES                         -->
+            <!-- =================================================================== -->
+            <g id="campus-roads">
+              <!-- Main Gate Road (Bottom-Right (1910, 1525) up-left to Check Post Fork (1420, 1140)) -->
+              <polygon points="1892,1542 1928,1508 1438,1122 1402,1158" class="road-corridor" />
+
+              <!-- Lower-Left Diagonal Avenue from Check Post Fork (1420, 1145) to SR University Circle (440, 1285) -->
+              <polygon points="1415,1128 1425,1164 445,1303 435,1267" class="road-corridor" />
+
+              <!-- Upper-Left Diagonal Avenue from Check Post Fork (1420, 1135) past SRIX to Library 9 Entrance (760, 965) -->
+              <polygon points="1428,1118 1412,1152 752,982 768,948" class="road-corridor" />
+
+              <!-- Spur Road from Upper Diagonal (1135, 1062) into SRIX SE Main Entrance (1025, 940) -->
+              <polygon points="1118,1070 1152,1054 1042,932 1008,948" class="road-corridor" />
+
+              <!-- Spur Road from Upper Diagonal (820, 980) into SRIX SW Second Entrance (820, 940) -->
+              <rect x="804" y="938" width="32" height="48" rx="4" class="road-corridor" />
+
+              <!-- Circle Down-Left Link to SR University 3rd Block (315, 1320 to 210, 1440) -->
+              <polygon points="302,1308 328,1332 224,1452 198,1428" class="road-corridor" />
+
+              <!-- West Vertical Avenue from Circle (370, 1225) North to NW Corner (370, 560) -->
+              <rect x="350" y="542" width="40" height="690" rx="6" class="road-corridor" />
+
+              <!-- ECE Block Horizontal Entrance Corridor (260, 885 to 355, 885) -->
+              <rect x="255" y="868" width="105" height="34" rx="4" class="road-corridor" />
+
+              <!-- Northern East-West Avenue from NW Corner (370, 560) East to SRIX-Block 11 Gap (1130, 560) -->
+              <rect x="350" y="542" width="798" height="38" rx="6" class="road-corridor" />
+
+              <!-- Admin Block Vertical Entrance Corridor (655, 275 to 655, 545) -->
+              <rect x="635" y="275" width="40" height="270" rx="4" class="road-corridor" />
+
+              <!-- DEDICATED PEDESTRIAN AVENUE GAP BETWEEN SRIX BLOCK (x=1040) & BLOCK 11 (x=1220) -->
+              <rect x="1105" y="485" width="52" height="585" rx="8" class="road-corridor" />
+
+              <!-- Horizontal Academic Promenade Between Block 8 (bottom y=460) and Block 11 (top y=690) -->
+              <rect x="1105" y="485" width="665" height="46" rx="8" class="road-corridor" />
+
+              <!-- Branch Corridor down into Block 11 Top Entrance (1290, 530 to 1290, 690) -->
+              <rect x="1270" y="525" width="40" height="168" rx="6" class="road-corridor" />
+
+              <!-- Center Road Dashed Lines -->
+              <line x1="1910" y1="1525" x2="1420" y2="1140" class="road-center-line" />
+              <line x1="1420" y1="1146" x2="440" y2="1285" class="road-center-line" />
+              <line x1="1420" y1="1135" x2="760" y2="965" class="road-center-line" />
+              <line x1="1135" y1="1062" x2="1025" y2="940" class="road-center-line" />
+              <line x1="370" y1="1225" x2="370" y2="560" class="road-center-line" />
+              <line x1="370" y1="560" x2="1131" y2="560" class="road-center-line" />
+              <line x1="1131" y1="1060" x2="1131" y2="508" class="road-center-line" />
+              <line x1="1131" y1="508" x2="1750" y2="508" class="road-center-line" />
+              <line x1="1290" y1="508" x2="1290" y2="690" class="road-center-line" />
+
+              <!-- Campus Directional Guide Arrows -->
+              <!-- Main Gate Arrow -->
+              <polygon points="1810,1445 1700,1358 1692,1368 1665,1330 1708,1348 1700,1358" class="guide-arrow-outline" />
+              <!-- Fork to Circle Arrow -->
+              <polygon points="1180,1180 1030,1201 1032,1212 985,1207 1028,1190 1030,1201" class="guide-arrow-outline" />
+              <!-- Fork to Library 9 Arrow -->
+              <polygon points="1240,1088 1110,1055 1107,1065 1070,1044 1113,1045 1110,1055" class="guide-arrow-outline" />
+              <!-- Spur into SRIX Main Entrance Arrow -->
+              <polygon points="1115,1038 1065,984 1057,991 1042,958 1073,976 1065,984" class="guide-arrow-outline" />
+              <!-- West Avenue Upward Arrows -->
+              <polygon points="370,1145 370,1045 360,1045 370,1015 380,1045 370,1045" class="guide-arrow-outline" />
+              <polygon points="370,750 370,650 360,650 370,620 380,650 370,650" class="guide-arrow-outline" />
+              <!-- Northern Avenue Eastward Arrows -->
+              <polygon points="460,560 560,560 560,550 590,560 560,570 560,560" class="guide-arrow-outline" />
+              <polygon points="840,560 940,560 940,550 970,560 940,570 940,560" class="guide-arrow-outline" />
+
+              <!-- DIRECTIONAL ARROWS IN GAP BETWEEN SRIX & 11 BLOCK -->
+              <polygon points="1131,940 1131,820 1120,820 1131,790 1142,820 1131,820" class="guide-arrow-outline" />
+              <polygon points="1131,730 1131,610 1120,610 1131,580 1142,610 1131,610" class="guide-arrow-outline" />
+              <text x="1131" y="762" class="tiny-label" fill="#38bdf8" font-size="8">TO 8, 10 &amp; 11</text>
+
+              <!-- Arrow into 8 Block -->
+              <polygon points="1220,508 1295,508 1295,499 1320,508 1295,517 1295,508" class="guide-arrow-outline" />
+              <text x="1275" y="476" class="tiny-label" fill="#38bdf8" font-size="8">TO 8 BLOCK</text>
+
+              <!-- Arrow Down into 11 Block Entrance (11003 & 11004) -->
+              <polygon points="1290,555 1290,625 1281,625 1290,650 1299,625 1290,625" class="guide-arrow-outline" />
+              <text x="1340" y="605" class="tiny-label" fill="#38bdf8" font-size="8">TO 11 BLOCK</text>
+
+              <!-- Large Horizontal Arrow Between 8 & 11 Block Toward 10 Block -->
+              <polygon points="1450,508 1640,508 1640,496 1690,508 1640,520 1640,508" class="guide-arrow-outline" />
+              <text x="1570" y="476" class="tiny-label" fill="#38bdf8" font-size="8.5">TO 10 BLOCK →</text>
+            </g>
+
+            <!-- =================================================================== -->
+            <!-- 2. MAIN GATE, CHECK POST, CIRCLE & 3RD BLOCK                        -->
+            <!-- =================================================================== -->
+            <g id="entry-landmarks">
+              <!-- SR University Main Gate -->
+              <g id="node_main_gate" class="clickable-block" onclick="quickNav('main_gate')">
+                <line x1="1865" y1="1570" x2="1955" y2="1480" stroke="#00f2fe" stroke-width="5" />
+                <circle cx="1910" cy="1525" r="9" fill="#10b981" stroke="#fff" stroke-width="2" />
+                <text x="1935" y="1560" class="room-label" fill="#00f2fe" font-size="12">SR UNIVERSITY MAIN GATE</text>
+              </g>
+
+              <!-- Check Post Diamond -->
+              <g id="node_check_post" class="clickable-block" onclick="quickNav('check_post')">
+                <polygon points="1420,1065 1455,1100 1420,1135 1385,1100" class="block-hull" />
+                <text x="1420" y="1103" class="tiny-label" font-size="8">CHECK POST</text>
+              </g>
+
+              <!-- SR University Circle -->
+              <g id="node_sru_circle" class="clickable-block" onclick="quickNav('sru_circle')">
+                <ellipse cx="370" cy="1285" rx="75" ry="52" class="block-hull" />
+                <text x="370" y="1289" class="room-label" font-size="10">SR UNIVERSITY CIRCLE</text>
+              </g>
+
+              <!-- SR University 3rd Block -->
+              <g id="node_block_3" class="clickable-block" onclick="quickNav('block_3')">
+                <rect x="40" y="1440" width="270" height="150" rx="8" class="block-hull" />
+                <text x="175" y="1520" class="block-title-text" font-size="16">SR UNIVERSITY 3RD BLOCK</text>
+              </g>
+            </g>
+
+            <!-- =================================================================== -->
+            <!-- 3. LIBRARY 9 BLOCK                                                  -->
+            <!-- =================================================================== -->
+            <g id="library-9-group">
+              <rect x="430" y="965" width="315" height="235" rx="8" class="block-hull" />
+
+              <!-- Amphi Sitting Area -->
+              <rect id="node_lib9_amphi" class="room" x="430" y="965" width="240" height="80" rx="4" onclick="quickNav('lib9_amphi')" />
+              <line x1="430" y1="992" x2="670" y2="992" stroke="#234175" stroke-width="1.2" />
+              <line x1="430" y1="1018" x2="670" y2="1018" stroke="#234175" stroke-width="1.2" />
+              <text x="550" y="1008" class="room-label" font-size="11">AMPHI SITTING AREA</text>
+
+              <!-- Central Court / Study Zone -->
+              <rect x="475" y="1075" width="145" height="28" rx="4" fill="#0a1426" stroke="#234175" />
+
+              <!-- Library Bottom Wing -->
+              <rect id="node_lib9_library" class="room" x="430" y="1135" width="315" height="65" rx="4" onclick="quickNav('lib9_library')" />
+              <text x="587" y="1172" class="room-label" font-size="12">LIBRARY</text>
+
+              <!-- Library 9 Block Right Wing -->
+              <rect class="room" x="670" y="965" width="75" height="170" rx="4" onclick="quickNav('lib9_entrance')" />
+              <text x="708" y="1050" class="room-label" font-size="11" transform="rotate(-90 708 1050)">LIBRARY 9 BLOCK</text>
+
+              <!-- Entrance Label -->
+              <text x="765" y="955" fill="#38bdf8" font-size="10" font-weight="800">ENTRANCE</text>
+            </g>
+
+            <!-- =================================================================== -->
+            <!-- 4. SR UNIVERSITY ECE BLOCK                                          -->
+            <!-- =================================================================== -->
+            <g id="ece-block-group">
+              <!-- Upper Wing -->
+              <rect id="node_ece_entrance" class="room" x="40" y="720" width="220" height="145" rx="6" onclick="quickNav('ece_entrance')" />
+              <rect x="75" y="750" width="145" height="85" rx="4" fill="#0a1426" stroke="#234175" />
+              <text x="148" y="790" class="room-label" font-size="11">SR UNIVERSITY</text>
+              <text x="148" y="805" class="room-label" font-size="11">ECE BLOCK</text>
+
+              <!-- Lower Wing -->
+              <rect class="room" x="115" y="905" width="175" height="125" rx="6" onclick="quickNav('ece_entrance')" />
+              <text x="202" y="965" class="room-label" font-size="11">SR UNIVERSITY</text>
+              <text x="202" y="980" class="room-label" font-size="11">ECE BLOCK</text>
+
+              <!-- Entrance Arrow -->
+              <path d="M 335 885 L 275 885" stroke="#38bdf8" stroke-width="2.4" fill="none" />
+              <polygon points="268,885 277,880 277,890" fill="#38bdf8" />
+              <text x="315" y="862" fill="#38bdf8" font-size="10" font-weight="800" text-anchor="middle">entrance</text>
+            </g>
+
+            <!-- =================================================================== -->
+            <!-- 5. ADMINISTRATION BLOCKS (TOP-LEFT)                                 -->
+            <!-- =================================================================== -->
+            <g id="admin-blocks-group">
+              <!-- Top Administration Block -->
+              <g id="node_admin_block_main" class="clickable-block" onclick="quickNav('admin_block_main')">
+                <rect x="520" y="50" width="250" height="225" rx="8" class="block-hull" />
+                <rect x="570" y="95" width="150" height="110" rx="5" fill="#0a1426" stroke="#234175" />
+                <text x="645" y="148" class="room-label" font-size="11">ADMINISTRATION</text>
+                <text x="645" y="163" class="room-label" font-size="11">BLOCK</text>
+              </g>
+
+              <!-- Administration Block 1st Block -->
+              <g id="node_admin_block_1st" class="clickable-block" onclick="quickNav('admin_block_1st')">
+                <rect x="350" y="275" width="285" height="235" rx="8" class="block-hull" />
+                <rect x="425" y="340" width="135" height="105" rx="5" fill="#0a1426" stroke="#234175" />
+                <text x="492" y="390" class="room-label" font-size="10">ADMINISTRATION</text>
+                <text x="492" y="404" class="room-label" font-size="10">BLOCK 1ST BLOCK</text>
+              </g>
+
+              <!-- Right Annex -->
+              <rect x="675" y="275" width="65" height="235" rx="6" class="block-hull" />
+              <text x="655" y="405" fill="#38bdf8" font-size="11" font-weight="800" text-anchor="middle" transform="rotate(-90 655 405)">ENTRANCE</text>
+            </g>
+
+            <!-- =================================================================== -->
+            <!-- 6. SRIX BLOCK (CENTER DETAILED FLOOR PLAN)                          -->
+            <!-- =================================================================== -->
+            <g id="srix-block-group">
+              <rect x="760" y="610" width="320" height="330" rx="8" class="block-hull" />
+
+              <!-- Central SRIX Courtyard -->
+              <rect x="855" y="705" width="135" height="140" rx="6" fill="#091224" stroke="#234175" stroke-width="1.8" />
+              <text x="922" y="770" class="block-title-text" font-size="19">SRIX</text>
+              <text x="922" y="794" class="block-title-text" font-size="19">BLOCK</text>
+
+              <!-- Left Wing: Canteen & Staff Dining Hall -->
+              <rect id="node_srix_canteen" class="room" x="760" y="665" width="68" height="205" rx="4" onclick="quickNav('srix_canteen')" />
+              <text x="794" y="772" class="room-label" font-size="11">CANTEEN</text>
+
+              <rect id="node_srix_dining" class="room" x="760" y="870" width="52" height="70" rx="4" onclick="quickNav('srix_dining')" />
+              <text x="786" y="905" class="tiny-label" font-size="7" transform="rotate(-90 786 905)">STAFF DINING</text>
+              <text x="796" y="905" class="tiny-label" font-size="7" transform="rotate(-90 796 905)">HALL</text>
+
+              <!-- Second Entrance (SW between Dining Hall & Principle Cabin) -->
+              <path d="M 822 952 L 822 910" stroke="#38bdf8" stroke-width="2.4" fill="none" />
+              <polygon points="822,902 817,911 827,911" fill="#38bdf8" />
+              <text x="822" y="964" fill="#38bdf8" font-size="7.5" font-weight="800" text-anchor="middle">SECOND ENTRANCE</text>
+
+              <!-- Top Wing: Hand Wash, Boys Washroom, Workshop, North Exit, SPD Lab -->
+              <rect class="room" x="828" y="610" width="22" height="55" rx="2" />
+              <text x="839" y="638" class="tiny-label" font-size="6.5" transform="rotate(-90 839 638)">HAND WASH</text>
+
+              <rect id="node_srix_boys_wr" class="room" x="850" y="610" width="46" height="55" rx="3" onclick="quickNav('srix_boys_wr')" />
+              <text x="873" y="635" class="tiny-label" font-size="7">BOYS</text>
+              <text x="873" y="645" class="tiny-label" font-size="7">WASHROOM</text>
+
+              <rect id="node_srix_workshop" class="room" x="896" y="610" width="32" height="55" rx="2" onclick="quickNav('srix_workshop')" />
+              <text x="912" y="638" class="tiny-label" font-size="6.5" transform="rotate(-90 912 638)">WORKSHOP</text>
+
+              <!-- North Corridor Exit Arrow -->
+              <path d="M 944 662 L 944 615" class="corridor-arrow-line" />
+              <polygon points="944,608 939,617 949,617" class="corridor-arrow-head" />
+
+              <rect id="node_srix_spd_lab" class="room" x="960" y="610" width="120" height="55" rx="4" onclick="quickNav('srix_spd_lab')" />
+              <text x="1020" y="641" class="room-label" font-size="10">SPD LAB</text>
+
+              <!-- Right Wing: Upper Lab, Girls Washroom, Lower Room -->
+              <rect class="room" x="1015" y="685" width="65" height="75" rx="3" />
+              <text x="1047" y="725" class="tiny-label" font-size="7.5">INCUBATION</text>
+
+              <rect id="node_srix_girls_wr" class="room" x="1015" y="760" width="65" height="28" rx="2" onclick="quickNav('srix_girls_wr')" />
+              <text x="1047" y="777" class="tiny-label" font-size="6.8">GIRLS WASHROOM</text>
+
+              <rect class="room" x="1015" y="788" width="65" height="65" rx="3" />
+              <text x="1047" y="823" class="tiny-label" font-size="7.5">SEMINAR</text>
+
+              <!-- Bottom Wing: Principle Cabin, Office Cabin, SE Diagonal Steps (Main Entrance) -->
+              <rect id="node_srix_principle" class="room" x="835" y="875" width="65" height="65" rx="3" onclick="quickNav('srix_principle')" />
+              <text x="867" y="905" class="tiny-label" font-size="7.5">PRINCIPLE</text>
+              <text x="867" y="916" class="tiny-label" font-size="7.5">CABIN</text>
+
+              <rect id="node_srix_office" class="room" x="900" y="875" width="75" height="65" rx="3" onclick="quickNav('srix_office')" />
+              <text x="937" y="910" class="tiny-label" font-size="7.5">SRIX OFFICE</text>
+
+              <!-- SE Corner Diagonal Steps -->
+              <g onclick="quickNav('srix_main_entrance')" style="cursor:pointer;">
+                <line x1="1030" y1="940" x2="1080" y2="890" stroke="#38bdf8" stroke-width="1.8" />
+                <line x1="1042" y1="940" x2="1080" y2="902" stroke="#38bdf8" stroke-width="1.8" />
+                <line x1="1054" y1="940" x2="1080" y2="914" stroke="#38bdf8" stroke-width="1.8" />
+                <line x1="1066" y1="940" x2="1080" y2="926" stroke="#38bdf8" stroke-width="1.8" />
+                <text x="1096" y="965" fill="#38bdf8" font-size="8" font-weight="800" text-anchor="middle">MAIN ENTRANCE</text>
+              </g>
+
+              <!-- SRIX Internal Clockwise Corridor Arrows -->
+              <path d="M 840 835 L 840 795" class="corridor-arrow-line" />
+              <polygon points="840,788 836,796 844,796" class="corridor-arrow-head" />
+              <path d="M 840 745 L 840 705" class="corridor-arrow-line" />
+              <polygon points="840,698 836,706 844,706" class="corridor-arrow-head" />
+
+              <path d="M 865 685 L 905 685" class="corridor-arrow-line" />
+              <polygon points="912,685 904,681 904,689" class="corridor-arrow-head" />
+              <path d="M 940 685 L 980 685" class="corridor-arrow-line" />
+              <polygon points="987,685 979,681 979,689" class="corridor-arrow-head" />
+
+              <path d="M 875 860 L 935 860" class="corridor-arrow-line" />
+              <polygon points="942,860 934,856 934,864" class="corridor-arrow-head" />
+
+              <path d="M 1002 835 L 1002 795" class="corridor-arrow-line" />
+              <polygon points="1002,788 998,796 1006,796" class="corridor-arrow-head" />
+              <path d="M 1002 745 L 1002 710" class="corridor-arrow-line" />
+              <polygon points="1002,703 998,711 1006,711" class="corridor-arrow-head" />
+            </g>
+
+            <!-- =================================================================== -->
+            <!-- 7. BLOCK 8 (EXACT ORTHOGONAL 90-DEGREE CORRIDOR ARCHITECTURE)       -->
+            <!-- =================================================================== -->
+            <g id="block-8-group">
+              <rect x="1220" y="80" width="460" height="380" rx="8" class="block-hull" />
+              <text x="1450" y="65" class="block-title-text">8 BLOCK</text>
+
+              <!-- Left Wing Labs -->
+              <rect id="node_r8003" class="room" x="1220" y="80" width="60" height="90" rx="4" onclick="quickNav('r8003')" />
+              <text x="1250" y="122" class="room-label">8003</text>
+              <text x="1250" y="134" class="room-sub">computer lab</text>
+
+              <rect id="node_r8002" class="room" x="1220" y="190" width="60" height="110" rx="4" onclick="quickNav('r8002')" />
+              <text x="1250" y="242" class="room-label">8002</text>
+              <text x="1250" y="254" class="room-sub">computer lab</text>
+
+              <rect id="node_r8001" class="room" x="1220" y="320" width="60" height="90" rx="4" onclick="quickNav('r8001')" />
+              <text x="1250" y="362" class="room-label">8001</text>
+              <text x="1250" y="374" class="room-sub">computer lab</text>
+
+              <!-- Top Row Rooms -->
+              <rect id="node_r8004" class="room" x="1300" y="80" width="95" height="70" rx="4" onclick="quickNav('r8004')" />
+              <text x="1347" y="112" class="room-label">8004</text>
+              <text x="1347" y="124" class="room-sub">classroom</text>
+
+              <rect class="room" x="1395" y="80" width="20" height="70" rx="2" />
+              <text x="1405" y="115" class="tiny-label" font-size="6.5" transform="rotate(-90 1405 115)">girls staff</text>
+
+              <rect id="node_b8_girls_washroom" class="room" x="1415" y="80" width="45" height="70" rx="3" onclick="quickNav('b8_girls_washroom')" />
+              <text x="1437" y="112" class="tiny-label" font-size="7">girls</text>
+              <text x="1437" y="122" class="tiny-label" font-size="7">washroom</text>
+
+              <rect class="room" x="1460" y="80" width="20" height="70" rx="2" />
+              <text x="1470" y="115" class="tiny-label" font-size="6.5" transform="rotate(-90 1470 115)">mens staff</text>
+
+              <rect id="node_b8_boys_washroom" class="room" x="1480" y="80" width="45" height="70" rx="3" onclick="quickNav('b8_boys_washroom')" />
+              <text x="1502" y="112" class="tiny-label" font-size="7">boys</text>
+              <text x="1502" y="122" class="tiny-label" font-size="7">washroom</text>
+
+              <rect id="node_b8_drinking_water" class="room" x="1525" y="80" width="20" height="70" rx="2" onclick="quickNav('b8_drinking_water')" />
+              <text x="1535" y="115" class="tiny-label" font-size="6" transform="rotate(-90 1535 115)">drinking water</text>
+
+              <!-- Staircases -->
+              <rect id="node_b8_stair1" x="1300" y="180" width="22" height="110" rx="3" class="staircase" onclick="quickNav('b8_stair1')" />
+              <text x="1311" y="235" class="stair-label" transform="rotate(-90 1311 235)">staircase 1</text>
+
+              <rect id="node_b8_stair2" x="1545" y="180" width="22" height="110" rx="3" class="staircase" onclick="quickNav('b8_stair2')" />
+              <text x="1556" y="235" class="stair-label" transform="rotate(-90 1556 235)">staircase 2</text>
+
+              <!-- Right Wing Classrooms -->
+              <rect id="node_r8005" class="room" x="1577" y="80" width="63" height="90" rx="4" onclick="quickNav('r8005')" />
+              <text x="1608" y="128" class="room-label">8005</text>
+
+              <rect id="node_r8006" class="room" x="1577" y="190" width="63" height="110" rx="4" onclick="quickNav('r8006')" />
+              <text x="1608" y="248" class="room-label">8006</text>
+
+              <rect id="node_r8007" class="room" x="1577" y="320" width="63" height="90" rx="4" onclick="quickNav('r8007')" />
+              <text x="1608" y="368" class="room-label">8007</text>
+
+              <!-- Bottom Rooms -->
+              <rect class="room" x="1370" y="335" width="48" height="75" rx="3" />
+              <text x="1394" y="370" class="tiny-label" font-size="6.5">electricity</text>
+              <text x="1394" y="380" class="tiny-label" font-size="6.5">room</text>
+
+              <rect id="node_r8008" class="room" x="1418" y="335" width="112" height="75" rx="4" onclick="quickNav('r8008')" />
+              <text x="1474" y="375" class="room-label">8008</text>
+
+              <!-- Block 8 Exact Orthogonal Corridor Arrows -->
+              <path d="M 1290 360 L 1290 330" class="corridor-arrow-line" />
+              <polygon points="1290,324 1286,331 1294,331" class="corridor-arrow-head" />
+              <path d="M 1290 205 L 1290 175" class="corridor-arrow-line" />
+              <polygon points="1290,169 1286,176 1294,176" class="corridor-arrow-head" />
+
+              <path d="M 1315 160 L 1345 160" class="corridor-arrow-line" />
+              <polygon points="1351,160 1344,156 1344,164" class="corridor-arrow-head" />
+              <path d="M 1385 160 L 1415 160" class="corridor-arrow-line" />
+              <polygon points="1421,160 1414,156 1414,164" class="corridor-arrow-head" />
+              <path d="M 1455 160 L 1485 160" class="corridor-arrow-line" />
+              <polygon points="1491,160 1484,156 1484,164" class="corridor-arrow-head" />
+              <path d="M 1525 160 L 1555 160" class="corridor-arrow-line" />
+              <polygon points="1561,160 1554,156 1554,164" class="corridor-arrow-head" />
+
+              <path d="M 1315 320 L 1345 320" class="corridor-arrow-line" />
+              <polygon points="1351,320 1344,316 1344,324" class="corridor-arrow-head" />
+              <path d="M 1385 320 L 1415 320" class="corridor-arrow-line" />
+              <polygon points="1421,320 1414,316 1414,324" class="corridor-arrow-head" />
+              <path d="M 1455 320 L 1485 320" class="corridor-arrow-line" />
+              <polygon points="1491,320 1484,316 1484,324" class="corridor-arrow-head" />
+              <path d="M 1525 320 L 1555 320" class="corridor-arrow-line" />
+              <polygon points="1561,320 1554,316 1554,324" class="corridor-arrow-head" />
+
+              <path d="M 1572 360 L 1572 330" class="corridor-arrow-line" />
+              <polygon points="1572,324 1568,331 1576,331" class="corridor-arrow-head" />
+              <path d="M 1572 240 L 1572 200" class="corridor-arrow-line" />
+              <polygon points="1572,194 1568,201 1576,201" class="corridor-arrow-head" />
+              <path d="M 1572 150 L 1572 115" class="corridor-arrow-line" />
+              <polygon points="1572,109 1568,116 1576,116" class="corridor-arrow-head" />
+
+              <!-- Bottom Main Entrance Arrow -->
+              <path d="M 1335 450 L 1335 425" stroke="#38bdf8" stroke-width="2.4" fill="none" />
+              <polygon points="1335,419 1331,427 1339,427" fill="#38bdf8" />
+            </g>
+
+            <!-- =================================================================== -->
+            <!-- 8. BLOCK 11 (IDENTICAL TO BLOCK 8; ENTRANCE BETWEEN 11003 & 11004)  -->
+            <!-- =================================================================== -->
+            <g id="block-11-group">
+              <rect x="1220" y="690" width="460" height="380" rx="8" class="block-hull" />
+              <text x="1480" y="1095" class="block-title-text">11 block</text>
+
+              <!-- Top Entrance Portal between 11003 (x=1280) and 11004 (x=1300) -->
+              <rect x="1280" y="684" width="20" height="12" rx="3" fill="#070d1a" stroke="#38bdf8" stroke-width="1.5" />
+              <path d="M 1290 672 L 1290 715" stroke="#38bdf8" stroke-width="2.4" fill="none" />
+              <polygon points="1290,722 1286,714 1294,714" fill="#38bdf8" />
+
+              <!-- Left Wing Labs -->
+              <rect id="node_r11003" class="room" x="1220" y="690" width="60" height="90" rx="4" onclick="quickNav('r11003')" />
+              <text x="1250" y="732" class="room-label">11003</text>
+              <text x="1250" y="744" class="room-sub">computer lab</text>
+
+              <rect id="node_r11002" class="room" x="1220" y="800" width="60" height="110" rx="4" onclick="quickNav('r11002')" />
+              <text x="1250" y="852" class="room-label">11002</text>
+              <text x="1250" y="864" class="room-sub">computer lab</text>
+
+              <rect id="node_r11001" class="room" x="1220" y="930" width="60" height="90" rx="4" onclick="quickNav('r11001')" />
+              <text x="1250" y="972" class="room-label">11001</text>
+              <text x="1250" y="984" class="room-sub">computer lab</text>
+
+              <!-- Top Row Rooms -->
+              <rect id="node_r11004" class="room" x="1300" y="690" width="95" height="70" rx="4" onclick="quickNav('r11004')" />
+              <text x="1347" y="722" class="room-label">11004</text>
+              <text x="1347" y="734" class="room-sub">classroom</text>
+
+              <rect class="room" x="1395" y="690" width="20" height="70" rx="2" />
+              <text x="1405" y="725" class="tiny-label" font-size="6.5" transform="rotate(-90 1405 725)">girls staff</text>
+
+              <rect id="node_b11_girls_washroom" class="room" x="1415" y="690" width="45" height="70" rx="3" onclick="quickNav('b11_girls_washroom')" />
+              <text x="1437" y="722" class="tiny-label" font-size="7">girls</text>
+              <text x="1437" y="732" class="tiny-label" font-size="7">washroom</text>
+
+              <rect class="room" x="1460" y="690" width="20" height="70" rx="2" />
+              <text x="1470" y="725" class="tiny-label" font-size="6.5" transform="rotate(-90 1470 725)">mens staff</text>
+
+              <rect id="node_b11_boys_washroom" class="room" x="1480" y="690" width="45" height="70" rx="3" onclick="quickNav('b11_boys_washroom')" />
+              <text x="1502" y="722" class="tiny-label" font-size="7">boys</text>
+              <text x="1502" y="732" class="tiny-label" font-size="7">washroom</text>
+
+              <rect id="node_b11_drinking_water" class="room" x="1525" y="690" width="20" height="70" rx="2" onclick="quickNav('b11_drinking_water')" />
+              <text x="1535" y="725" class="tiny-label" font-size="6" transform="rotate(-90 1535 725)">drinking water</text>
+
+              <!-- Staircases -->
+              <rect id="node_b11_stair1" x="1300" y="790" width="22" height="110" rx="3" class="staircase" onclick="quickNav('b11_stair1')" />
+              <text x="1311" y="845" class="stair-label" transform="rotate(-90 1311 845)">staircase 1</text>
+
+              <rect id="node_b11_stair2" x="1545" y="790" width="22" height="110" rx="3" class="staircase" onclick="quickNav('b11_stair2')" />
+              <text x="1556" y="845" class="stair-label" transform="rotate(-90 1556 845)">staircase 2</text>
+
+              <!-- Right Wing Classrooms -->
+              <rect id="node_r11005" class="room" x="1577" y="690" width="63" height="90" rx="4" onclick="quickNav('r11005')" />
+              <text x="1608" y="738" class="room-label">11005</text>
+
+              <rect id="node_r11006" class="room" x="1577" y="800" width="63" height="110" rx="4" onclick="quickNav('r11006')" />
+              <text x="1608" y="858" class="room-label">11006</text>
+
+              <rect id="node_r11007" class="room" x="1577" y="930" width="63" height="90" rx="4" onclick="quickNav('r11007')" />
+              <text x="1608" y="978" class="room-label">11007</text>
+
+              <!-- Bottom Rooms -->
+              <rect class="room" x="1370" y="945" width="48" height="75" rx="3" />
+              <text x="1394" y="980" class="tiny-label" font-size="6.5">electricity</text>
+              <text x="1394" y="990" class="tiny-label" font-size="6.5">room</text>
+
+              <rect id="node_r11008" class="room" x="1418" y="945" width="112" height="75" rx="4" onclick="quickNav('r11008')" />
+              <text x="1474" y="985" class="room-label">11008</text>
+
+              <!-- Block 11 Exact Orthogonal Corridor Arrows (Identical to Block 8) -->
+              <path d="M 1290 970 L 1290 940" class="corridor-arrow-line" />
+              <polygon points="1290,934 1286,941 1294,941" class="corridor-arrow-head" />
+              <path d="M 1290 815 L 1290 785" class="corridor-arrow-line" />
+              <polygon points="1290,779 1286,786 1294,786" class="corridor-arrow-head" />
+
+              <path d="M 1315 770 L 1345 770" class="corridor-arrow-line" />
+              <polygon points="1351,770 1344,766 1344,774" class="corridor-arrow-head" />
+              <path d="M 1385 770 L 1415 770" class="corridor-arrow-line" />
+              <polygon points="1421,770 1414,766 1414,774" class="corridor-arrow-head" />
+              <path d="M 1455 770 L 1485 770" class="corridor-arrow-line" />
+              <polygon points="1491,770 1484,766 1484,774" class="corridor-arrow-head" />
+              <path d="M 1525 770 L 1555 770" class="corridor-arrow-line" />
+              <polygon points="1561,770 1554,766 1554,774" class="corridor-arrow-head" />
+
+              <path d="M 1315 930 L 1345 930" class="corridor-arrow-line" />
+              <polygon points="1351,930 1344,926 1344,934" class="corridor-arrow-head" />
+              <path d="M 1385 930 L 1415 930" class="corridor-arrow-line" />
+              <polygon points="1421,930 1414,926 1414,934" class="corridor-arrow-head" />
+              <path d="M 1455 930 L 1485 930" class="corridor-arrow-line" />
+              <polygon points="1491,930 1484,926 1484,934" class="corridor-arrow-head" />
+              <path d="M 1525 930 L 1555 930" class="corridor-arrow-line" />
+              <polygon points="1561,930 1554,926 1554,934" class="corridor-arrow-head" />
+
+              <path d="M 1572 970 L 1572 940" class="corridor-arrow-line" />
+              <polygon points="1572,934 1568,941 1576,941" class="corridor-arrow-head" />
+              <path d="M 1572 850 L 1572 810" class="corridor-arrow-line" />
+              <polygon points="1572,804 1568,811 1576,811" class="corridor-arrow-head" />
+              <path d="M 1572 760 L 1572 725" class="corridor-arrow-line" />
+              <polygon points="1572,719 1568,726 1576,726" class="corridor-arrow-head" />
+            </g>
+
+            <!-- =================================================================== -->
+            <!-- 9. BLOCK 10 (EXACT ORIGINAL BLUEPRINT STARTING AT MID-BLOCK 8)      -->
+            <!-- =================================================================== -->
+            <g id="block-10-group">
+              <!-- Upper 3-Bay Wing (y=270, widths 85, 95, 70, height 110) -->
+              <g class="clickable-block" onclick="quickNav('b10_center')">
+                <rect x="1750" y="270" width="85" height="110" rx="4" class="block-hull" />
+                <rect x="1835" y="270" width="95" height="110" rx="4" class="block-hull" />
+                <rect x="1930" y="270" width="70" height="110" rx="4" class="block-hull" />
+              </g>
+
+              <!-- Small Rectangular Annex Below Top-Left Bay (width 58, height 14 at y=390) -->
+              <rect x="1770" y="390" width="58" height="14" rx="2" class="block-hull" />
+
+              <!-- Lower-Left Wing with Gate Portal (width 140, height 110 at y=480) -->
+              <g id="node_b10_gate" class="clickable-block" onclick="quickNav('b10_gate')">
+                <rect x="1750" y="480" width="140" height="110" rx="6" class="block-hull" />
+                <circle cx="1750" cy="508" r="6" fill="#38bdf8" stroke="#fff" stroke-width="1.5" />
+                <text x="1736" y="512" fill="#38bdf8" font-size="11" font-weight="800" text-anchor="end">Gate</text>
+              </g>
+
+              <!-- Lower-Right Vertical Wing (width 85, height 180 at x=1910, y=410) -->
+              <g id="node_b10_center" class="clickable-block" onclick="quickNav('b10_center')">
+                <rect x="1910" y="410" width="85" height="180" rx="6" class="block-hull" />
+              </g>
+
+              <text x="1865" y="545" class="block-title-text" font-size="24">10 block</text>
+            </g>
+
+            <!-- =================================================================== -->
+            <!-- 10. ANIMATED ROUTE OVERLAY & POSITION PINS                          -->
+            <!-- =================================================================== -->
+            <path id="pathGlow" class="nav-path-glow" d="" />
+            <path id="pathCore" class="nav-path-core" d="" marker-end="url(#navArrow)" />
+
+            <circle id="startDot" cx="-100" cy="-100" r="8" class="start-marker" />
+            <circle id="destDot" cx="-100" cy="-100" r="9" class="dest-marker" />
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Turn-by-Turn Navigation Guide -->
+    <div class="guide-panel">
+      <div class="guide-title"><i class="fa-solid fa-diamond-turn-right" style="color: var(--accent-cyan);"></i> NAVIGATION GUIDE</div>
+      <div class="guide-summary" id="guideRouteText">SR University Main Gate → Room 8005</div>
+
+      <div class="metric-tiles">
+        <div class="metric-tile">
+          <div class="metric-name">Est. Walk Time</div>
+          <div class="metric-value" id="estWalk">--</div>
+        </div>
+        <div class="metric-tile">
+          <div class="metric-name">Route Distance</div>
+          <div class="metric-value" id="estDist">--</div>
+        </div>
+      </div>
+
+      <div style="font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted);">
+        Turn-by-Turn Waypoints
+      </div>
+      <div class="steps-list" id="stepsList"></div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // SPATIAL COORDINATES (ORTHOGONAL CORRIDOR SPINE & PERPENDICULAR TAPS)
+    // =========================================================================
+    const nodeCoords = {
+      // Main Gate & Outdoor Campus Roads
+      "main_gate": { x: 1910, y: 1525, name: "SR University Main Gate" },
+      "check_post": { x: 1420, y: 1100, name: "Check Post" },
+      "road_fork": { x: 1420, y: 1140, name: "Main Road Fork" },
+      "sru_circle": { x: 370, y: 1285, name: "SR University Circle" },
+      "block_3": { x: 210, y: 1440, name: "SR University 3rd Block" },
+
+      // West & North Avenues
+      "ave_west_south": { x: 370, y: 1225, name: "West Avenue (Circle North)" },
+      "ave_ece_jct": { x: 370, y: 885, name: "ECE Block Junction" },
+      "ece_entrance": { x: 265, y: 885, name: "SR University ECE Block" },
+      "ave_nw_corner": { x: 370, y: 560, name: "North-West Avenue Corner" },
+      "ave_admin_jct": { x: 655, y: 560, name: "Administration Block Turn" },
+      "admin_entrance": { x: 655, y: 390, name: "Administration Block Entrance" },
+      "admin_block_main": { x: 655, y: 275, name: "Administration Block" },
+      "admin_block_1st": { x: 635, y: 390, name: "Administration Block 1st Block" },
+
+      // Upper Diagonal & Library 9
+      "road_srix_se_spur": { x: 1135, y: 1062, name: "SRIX South-East Approach" },
+      "road_srix_sw_spur": { x: 822, y: 981, name: "SRIX South-West Approach" },
+      "lib9_entrance": { x: 745, y: 965, name: "Library 9 Block Entrance" },
+      "lib9_amphi": { x: 670, y: 1005, name: "Amphi Sitting Area (Library 9)" },
+      "lib9_library": { x: 670, y: 1135, name: "Library (Library 9 Block)" },
+
+      // SRIX Block Interior (Orthogonal Corridor Loop)
+      "srix_main_entrance": { x: 1030, y: 940, name: "SRIX Main Entrance (SE Steps)" },
+      "srix_second_entrance": { x: 822, y: 940, name: "SRIX Second Entrance (SW)" },
+      "srix_corridor_sw": { x: 840, y: 860, name: "SRIX SW Corridor" },
+      "srix_corridor_nw": { x: 840, y: 685, name: "SRIX NW Corridor" },
+      "srix_corridor_ne": { x: 1002, y: 685, name: "SRIX NE Corridor" },
+      "srix_corridor_se": { x: 1002, y: 860, name: "SRIX SE Corridor" },
+      "srix_canteen": { x: 828, y: 770, name: "SRIX Canteen" },
+      "srix_dining": { x: 812, y: 905, name: "SRIX Staff Dining Hall" },
+      "srix_principle": { x: 867, y: 875, name: "SRIX Principle Cabin" },
+      "srix_office": { x: 937, y: 875, name: "SRIX Office Cabin" },
+      "srix_boys_wr": { x: 873, y: 665, name: "SRIX Boys Washroom" },
+      "srix_workshop": { x: 912, y: 665, name: "SRIX Workshop" },
+      "srix_north_exit": { x: 944, y: 610, name: "SRIX North Exit" },
+      "srix_spd_lab": { x: 1002, y: 665, name: "SRIX SPD Lab" },
+      "srix_girls_wr": { x: 1015, y: 774, name: "SRIX Girls Washroom" },
+
+      // SRIX–Block 11 Gap & Academic Promenade
+      "gap_south": { x: 1131, y: 1055, name: "SRIX–11 Block South Avenue" },
+      "gap_mid": { x: 1131, y: 560, name: "SRIX–11 Block Central Avenue" },
+      "gap_north_hub": { x: 1131, y: 508, name: "Academic Blocks Promenade Hub" },
+      "promenade_b11_turn": { x: 1290, y: 508, name: "Block 11 Entrance Turn" },
+      "promenade_b8_turn": { x: 1335, y: 508, name: "Block 8 Entrance Turn" },
+      "promenade_b10_gate": { x: 1750, y: 508, name: "10 Block West Gate Approach" },
+
+      // Block 8 Exact 90-Degree Corridor Spine & Room Taps
+      "b8_main_entrance": { x: 1335, y: 450, name: "Block 8 Main Entrance" },
+      "b8_hall_s": { x: 1335, y: 320, name: "Block 8 South Corridor" },
+      "b8_sw": { x: 1290, y: 320, name: "Block 8 SW Corridor Corner" },
+      "b8_w_mid": { x: 1290, y: 245, name: "Block 8 West Corridor" },
+      "b8_nw": { x: 1290, y: 160, name: "Block 8 NW Corridor Corner" },
+      "b8_ne": { x: 1572, y: 160, name: "Block 8 NE Corridor Corner" },
+      "b8_e_mid": { x: 1572, y: 245, name: "Block 8 East Corridor" },
+      "b8_se": { x: 1572, y: 320, name: "Block 8 SE Corridor Corner" },
+
+      "b8_tap_8001": { x: 1290, y: 365, name: "8001 Corridor Tap" },
+      "r8001": { x: 1280, y: 365, name: "8001 Computer Lab" },
+      "r8002": { x: 1280, y: 245, name: "8002 Computer Lab" },
+      "b8_stair1": { x: 1300, y: 245, name: "Block 8 Staircase 1" },
+      "b8_tap_8003": { x: 1290, y: 125, name: "8003 Corridor Tap" },
+      "r8003": { x: 1280, y: 125, name: "8003 Computer Lab" },
+
+      "b8_tap_8004": { x: 1347, y: 160, name: "8004 Corridor Tap" },
+      "r8004": { x: 1347, y: 150, name: "8004 Classroom" },
+      "b8_tap_girls": { x: 1437, y: 160, name: "Girls Washroom Tap (B8)" },
+      "b8_girls_washroom": { x: 1437, y: 150, name: "Girls Washroom (Block 8)" },
+      "b8_tap_boys": { x: 1502, y: 160, name: "Boys Washroom Tap (B8)" },
+      "b8_boys_washroom": { x: 1502, y: 150, name: "Boys Washroom (Block 8)" },
+      "b8_tap_water": { x: 1535, y: 160, name: "Drinking Water Tap (B8)" },
+      "b8_drinking_water": { x: 1535, y: 150, name: "Drinking Water (Block 8)" },
+
+      "b8_tap_8005": { x: 1572, y: 125, name: "8005 Corridor Tap" },
+      "r8005": { x: 1577, y: 125, name: "Room 8005" },
+      "r8006": { x: 1577, y: 245, name: "Room 8006" },
+      "b8_stair2": { x: 1567, y: 245, name: "Block 8 Staircase 2" },
+      "b8_tap_8007": { x: 1572, y: 365, name: "8007 Corridor Tap" },
+      "r8007": { x: 1577, y: 365, name: "Room 8007" },
+
+      "b8_tap_8008": { x: 1474, y: 320, name: "8008 Corridor Tap" },
+      "r8008": { x: 1474, y: 335, name: "Room 8008" },
+
+      // Block 11 Exact 90-Degree Corridor Spine (Top Entrance between 11003 & 11004)
+      "b11_main_entrance": { x: 1290, y: 690, name: "Block 11 Entrance (11003 & 11004)" },
+      "b11_tap_11003": { x: 1290, y: 735, name: "11003 Corridor Tap" },
+      "r11003": { x: 1280, y: 735, name: "11003 Computer Lab" },
+      "b11_nw": { x: 1290, y: 770, name: "Block 11 NW Corridor Corner" },
+      "b11_w_mid": { x: 1290, y: 855, name: "Block 11 West Corridor" },
+      "b11_sw": { x: 1290, y: 930, name: "Block 11 SW Corridor Corner" },
+      "b11_ne": { x: 1572, y: 770, name: "Block 11 NE Corridor Corner" },
+      "b11_e_mid": { x: 1572, y: 855, name: "Block 11 East Corridor" },
+      "b11_se": { x: 1572, y: 930, name: "Block 11 SE Corridor Corner" },
+
+      "r11002": { x: 1280, y: 855, name: "11002 Computer Lab" },
+      "b11_stair1": { x: 1300, y: 855, name: "Block 11 Staircase 1" },
+      "b11_tap_11001": { x: 1290, y: 975, name: "11001 Corridor Tap" },
+      "r11001": { x: 1280, y: 975, name: "11001 Computer Lab" },
+
+      "b11_tap_11004": { x: 1347, y: 770, name: "11004 Corridor Tap" },
+      "r11004": { x: 1347, y: 760, name: "11004 Classroom" },
+      "b11_tap_girls": { x: 1437, y: 770, name: "Girls Washroom Tap (B11)" },
+      "b11_girls_washroom": { x: 1437, y: 760, name: "Girls Washroom (Block 11)" },
+      "b11_tap_boys": { x: 1502, y: 770, name: "Boys Washroom Tap (B11)" },
+      "b11_boys_washroom": { x: 1502, y: 760, name: "Boys Washroom (Block 11)" },
+      "b11_tap_water": { x: 1535, y: 770, name: "Drinking Water Tap (B11)" },
+      "b11_drinking_water": { x: 1535, y: 760, name: "Drinking Water (Block 11)" },
+
+      "b11_tap_11005": { x: 1572, y: 735, name: "11005 Corridor Tap" },
+      "r11005": { x: 1577, y: 735, name: "Room 11005" },
+      "r11006": { x: 1577, y: 855, name: "Room 11006" },
+      "b11_stair2": { x: 1567, y: 855, name: "Block 11 Staircase 2" },
+      "b11_tap_11007": { x: 1572, y: 975, name: "11007 Corridor Tap" },
+      "r11007": { x: 1577, y: 975, name: "Room 11007" },
+
+      "b11_tap_11008": { x: 1474, y: 930, name: "11008 Corridor Tap" },
+      "r11008": { x: 1474, y: 945, name: "Room 11008" },
+
+      // Block 10
+      "b10_gate": { x: 1750, y: 508, name: "10 Block West Gate" },
+      "b10_center": { x: 1952, y: 508, name: "10 Block Central Wing" }
+    };
+
+    // =========================================================================
+    // WEIGHTED UNDIRECTED CAMPUS GRAPH BUILDER
+    // =========================================================================
+    const campusNetwork = {};
+
+    function connect(u, v) {
+      if (!campusNetwork[u]) campusNetwork[u] = {};
+      if (!campusNetwork[v]) campusNetwork[v] = {};
+      const dx = nodeCoords[u].x - nodeCoords[v].x;
+      const dy = nodeCoords[u].y - nodeCoords[v].y;
+      const dist = Math.max(1, Math.round(Math.hypot(dx, dy) / 5));
+      campusNetwork[u][v] = dist;
+      campusNetwork[v][u] = dist;
+    }
+
+    // 1. Main Gate, Check Post & Campus Roads
+    connect("main_gate", "road_fork");
+    connect("road_fork", "check_post");
+    connect("road_fork", "sru_circle");
+    connect("sru_circle", "block_3");
+    connect("sru_circle", "ave_west_south");
+    connect("ave_west_south", "ave_ece_jct");
+    connect("ave_ece_jct", "ece_entrance");
+    connect("ave_ece_jct", "ave_nw_corner");
+    connect("ave_nw_corner", "ave_admin_jct");
+    connect("ave_admin_jct", "admin_entrance");
+    connect("admin_entrance", "admin_block_main");
+    connect("admin_entrance", "admin_block_1st");
+    connect("ave_admin_jct", "gap_mid");
+
+    // Upper Diagonal Avenue (Fork -> SRIX -> Library 9)
+    connect("road_fork", "road_srix_se_spur");
+    connect("road_srix_se_spur", "gap_south");
+    connect("road_srix_se_spur", "srix_main_entrance");
+    connect("road_srix_se_spur", "road_srix_sw_spur");
+    connect("road_srix_sw_spur", "srix_second_entrance");
+    connect("road_srix_sw_spur", "lib9_entrance");
+    connect("lib9_entrance", "lib9_amphi");
+    connect("lib9_amphi", "lib9_library");
+
+    // 2. SRIX Block Interior Loop
+    connect("srix_main_entrance", "srix_corridor_se");
+    connect("srix_second_entrance", "srix_corridor_sw");
+    connect("srix_corridor_sw", "srix_dining");
+    connect("srix_corridor_sw", "srix_principle");
+    connect("srix_corridor_sw", "srix_corridor_se");
+    connect("srix_corridor_se", "srix_office");
+    connect("srix_corridor_sw", "srix_canteen");
+    connect("srix_corridor_sw", "srix_corridor_nw");
+    connect("srix_corridor_nw", "srix_boys_wr");
+    connect("srix_corridor_nw", "srix_workshop");
+    connect("srix_corridor_nw", "srix_corridor_ne");
+    connect("srix_corridor_ne", "srix_north_exit");
+    connect("srix_north_exit", "ave_admin_jct");
+    connect("srix_corridor_ne", "srix_spd_lab");
+    connect("srix_corridor_ne", "srix_corridor_se");
+    connect("srix_corridor_se", "srix_girls_wr");
+
+    // 3. SRIX–Block 11 Corridor Gap & Academic Promenade
+    connect("gap_south", "gap_mid");
+    connect("gap_mid", "gap_north_hub");
+    connect("gap_north_hub", "promenade_b11_turn");
+    connect("promenade_b11_turn", "b11_main_entrance");
+    connect("promenade_b11_turn", "promenade_b8_turn");
+    connect("promenade_b8_turn", "b8_main_entrance");
+    connect("promenade_b8_turn", "promenade_b10_gate");
+    connect("promenade_b10_gate", "b10_gate");
+    connect("b10_gate", "b10_center");
+
+    // 4. Block 8 Orthogonal 90-Degree Corridor Spine
+    connect("b8_main_entrance", "b8_hall_s");
+    connect("b8_sw", "b8_hall_s");
+    connect("b8_hall_s", "b8_tap_8008");
+    connect("b8_tap_8008", "r8008");
+    connect("b8_tap_8008", "b8_se");
+
+    connect("b8_sw", "b8_tap_8001");
+    connect("b8_tap_8001", "r8001");
+    connect("b8_sw", "b8_w_mid");
+    connect("b8_w_mid", "r8002");
+    connect("b8_w_mid", "b8_stair1");
+    connect("b8_w_mid", "b8_nw");
+    connect("b8_nw", "b8_tap_8003");
+    connect("b8_tap_8003", "r8003");
+
+    connect("b8_nw", "b8_tap_8004");
+    connect("b8_tap_8004", "r8004");
+    connect("b8_tap_8004", "b8_tap_girls");
+    connect("b8_tap_girls", "b8_girls_washroom");
+    connect("b8_tap_girls", "b8_tap_boys");
+    connect("b8_tap_boys", "b8_boys_washroom");
+    connect("b8_tap_boys", "b8_tap_water");
+    connect("b8_tap_water", "b8_drinking_water");
+    connect("b8_tap_water", "b8_ne");
+
+    connect("b8_ne", "b8_tap_8005");
+    connect("b8_tap_8005", "r8005");
+    connect("b8_ne", "b8_e_mid");
+    connect("b8_e_mid", "r8006");
+    connect("b8_e_mid", "b8_stair2");
+    connect("b8_e_mid", "b8_se");
+    connect("b8_se", "b8_tap_8007");
+    connect("b8_tap_8007", "r8007");
+
+    // 5. Block 11 Orthogonal 90-Degree Corridor Spine
+    connect("b11_main_entrance", "b11_tap_11003");
+    connect("b11_tap_11003", "r11003");
+    connect("b11_tap_11003", "b11_nw");
+
+    connect("b11_nw", "b11_w_mid");
+    connect("b11_w_mid", "r11002");
+    connect("b11_w_mid", "b11_stair1");
+    connect("b11_w_mid", "b11_sw");
+    connect("b11_sw", "b11_tap_11001");
+    connect("b11_tap_11001", "r11001");
+
+    connect("b11_nw", "b11_tap_11004");
+    connect("b11_tap_11004", "r11004");
+    connect("b11_tap_11004", "b11_tap_girls");
+    connect("b11_tap_girls", "b11_girls_washroom");
+    connect("b11_tap_girls", "b11_tap_boys");
+    connect("b11_tap_boys", "b11_boys_washroom");
+    connect("b11_tap_boys", "b11_tap_water");
+    connect("b11_tap_water", "b11_drinking_water");
+    connect("b11_tap_water", "b11_ne");
+
+    connect("b11_ne", "b11_tap_11005");
+    connect("b11_tap_11005", "r11005");
+    connect("b11_ne", "b11_e_mid");
+    connect("b11_e_mid", "r11006");
+    connect("b11_e_mid", "b11_stair2");
+    connect("b11_e_mid", "b11_se");
+    connect("b11_se", "b11_tap_11007");
+    connect("b11_tap_11007", "r11007");
+
+    connect("b11_sw", "b11_tap_11008");
+    connect("b11_tap_11008", "r11008");
+    connect("b11_tap_11008", "b11_se");
+
+    // =========================================================================
+    // DIJKSTRA SHORTEST PATH ALGORITHM
+    // =========================================================================
+    function solveDijkstra(start, destination) {
+      const distances = {};
+      const previous = {};
+      const unvisited = new Set(Object.keys(campusNetwork));
+
+      for (const node in campusNetwork) {
+        distances[node] = Infinity;
+        previous[node] = null;
+      }
+      distances[start] = 0;
+
+      while (unvisited.size > 0) {
+        let current = null;
+        let minVal = Infinity;
+        for (const node of unvisited) {
+          if (distances[node] < minVal) {
+            minVal = distances[node];
+            current = node;
+          }
+        }
+
+        if (!current || current === destination || distances[current] === Infinity) break;
+        unvisited.delete(current);
+
+        for (const neighbor in campusNetwork[current]) {
+          const alt = distances[current] + campusNetwork[current][neighbor];
+          if (alt < distances[neighbor]) {
+            distances[neighbor] = alt;
+            previous[neighbor] = current;
+          }
+        }
+      }
+
+      const path = [];
+      let curr = destination;
+      while (curr) {
+        path.unshift(curr);
+        curr = previous[curr];
+      }
+
+      return {
+        path: path[0] === start ? path : [],
+        cost: distances[destination]
+      };
+    }
+
+    function calculateRoute() {
+      const startKey = document.getElementById("startSelect").value;
+      const destKey = document.getElementById("destSelect").value;
+
+      document.querySelectorAll(".room, .clickable-block").forEach((el) => el.classList.remove("active-dest"));
+      const targetEl = document.getElementById("node_" + destKey);
+      if (targetEl) targetEl.classList.add("active-dest");
+
+      const startName = nodeCoords[startKey] ? nodeCoords[startKey].name : startKey;
+      const destName = nodeCoords[destKey] ? nodeCoords[destKey].name : destKey;
+      document.getElementById("targetBadge").textContent = "Target: " + destName;
+      document.getElementById("guideRouteText").textContent = startName + " → " + destName;
+
+      if (startKey === destKey) {
+        const pt = nodeCoords[startKey];
+        document.getElementById("pathGlow").setAttribute("d", "");
+        document.getElementById("pathCore").setAttribute("d", "");
+        document.getElementById("startDot").setAttribute("cx", pt.x);
+        document.getElementById("startDot").setAttribute("cy", pt.y);
+        document.getElementById("destDot").setAttribute("cx", pt.x);
+        document.getElementById("destDot").setAttribute("cy", pt.y);
+        document.getElementById("estDist").textContent = "0 m";
+        document.getElementById("estWalk").textContent = "0 sec";
+        document.getElementById("stepsList").innerHTML = `<div class="step-item"><div class="step-num">✓</div><div>You are already at <strong>${destName}</strong>.</div></div>`;
+        return;
+      }
+
+      const result = solveDijkstra(startKey, destKey);
+      const pathNodes = result.path;
+
+      if (!pathNodes || pathNodes.length < 2) return;
+
+      let d = `M ${nodeCoords[pathNodes[0]].x} ${nodeCoords[pathNodes[0]].y}`;
+      for (let i = 1; i < pathNodes.length; i++) {
+        const pt = nodeCoords[pathNodes[i]];
+        d += ` L ${pt.x} ${pt.y}`;
+      }
+
+      document.getElementById("pathGlow").setAttribute("d", d);
+      document.getElementById("pathCore").setAttribute("d", d);
+
+      const firstPt = nodeCoords[pathNodes[0]];
+      const lastPt = nodeCoords[pathNodes[pathNodes.length - 1]];
+      document.getElementById("startDot").setAttribute("cx", firstPt.x);
+      document.getElementById("startDot").setAttribute("cy", firstPt.y);
+      document.getElementById("destDot").setAttribute("cx", lastPt.x);
+      document.getElementById("destDot").setAttribute("cy", lastPt.y);
+
+      const meters = Math.max(5, Math.round(result.cost * 1.4));
+      const seconds = Math.max(5, Math.round(meters * 0.72));
+      document.getElementById("estDist").textContent = "~ " + meters + " m";
+      document.getElementById("estWalk").textContent = seconds >= 60
+        ? `~ ${Math.floor(seconds / 60)}m ${seconds % 60}s`
+        : `~ ${seconds} sec`;
+
+      renderSteps(pathNodes, startName, destName);
+    }
+
+    function renderSteps(pathNodes, startName, destName) {
+      const milestones = pathNodes.filter((id, idx) => {
+        if (idx === 0 || idx === pathNodes.length - 1) return true;
+        return !id.includes("_tap_");
+      });
+
+      const listEl = document.getElementById("stepsList");
+      listEl.innerHTML = "";
+
+      milestones.forEach((nodeId, index) => {
+        const label = nodeCoords[nodeId].name;
+        let text = "";
+        if (index === 0) {
+          text = `Start at <strong>${startName}</strong>.`;
+        } else if (index === milestones.length - 1) {
+          text = `Arrive at destination: <strong>${destName}</strong>.`;
+        } else {
+          text = `Proceed via <strong>${label}</strong>.`;
+        }
+        const item = document.createElement("div");
+        item.className = "step-item";
+        item.innerHTML = `<div class="step-num">${index + 1}</div><div>${text}</div>`;
+        listEl.appendChild(item);
+      });
+    }
+
+    function quickNav(destKey) {
+      const destSelect = document.getElementById("destSelect");
+      for (let i = 0; i < destSelect.options.length; i++) {
+        if (destSelect.options[i].value === destKey) {
+          destSelect.selectedIndex = i;
+          break;
+        }
+      }
+      calculateRoute();
+    }
+
+    function swapLocations() {
+      const startSel = document.getElementById("startSelect");
+      const destSel = document.getElementById("destSelect");
+      const tempStart = startSel.value;
+      const tempDest = destSel.value;
+
+      let matchedDest = false;
+      for (let i = 0; i < startSel.options.length; i++) {
+        if (startSel.options[i].value === tempDest) {
+          startSel.selectedIndex = i;
+          matchedDest = true;
+          break;
+        }
+      }
+      if (matchedDest) {
+        for (let j = 0; j < destSel.options.length; j++) {
+          if (destSel.options[j].value === tempStart) {
+            destSel.selectedIndex = j;
+            break;
+          }
+        }
+      }
+      calculateRoute();
+    }
+
+    function resetAll() {
+      document.getElementById("startSelect").value = "main_gate";
+      document.getElementById("destSelect").value = "r8005";
+      resetPanZoom();
+      calculateRoute();
+    }
+
+    // =========================================================================
+    // PAN, ZOOM & PRESET CAMERA FOCUS
+    // =========================================================================
+    let scale = 1;
+    let panX = 0;
+    let panY = 0;
+    let isPanning = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+
+    const viewport = document.getElementById("svgViewport");
+    const mapGroup = document.getElementById("mapPanGroup");
+
+    function updateTransform() {
+      mapGroup.setAttribute("transform", `matrix(${scale} 0 0 ${scale} ${panX} ${panY})`);
+    }
+
+    function adjustZoom(factor) {
+      scale = Math.min(Math.max(0.55, scale * factor), 3.2);
+      updateTransform();
+    }
+
+    function resetPanZoom() {
+      scale = 1;
+      panX = 0;
+      panY = 0;
+      updateTransform();
+    }
+
+    function focusCamera(targetX, targetY, targetScale) {
+      scale = targetScale;
+      panX = targetX;
+      panY = targetY;
+      updateTransform();
+    }
+
+    viewport.addEventListener("mousedown", (e) => {
+      if (e.target.closest(".zoom-toolbar")) return;
+      isPanning = true;
+      dragStartX = e.clientX - panX;
+      dragStartY = e.clientY - panY;
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (!isPanning) return;
+      panX = e.clientX - dragStartX;
+      panY = e.clientY - dragStartY;
+      updateTransform();
+    });
+
+    window.addEventListener("mouseup", () => {
+      isPanning = false;
+    });
+
+    viewport.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      adjustZoom(e.deltaY < 0 ? 1.12 : 0.88);
+    }, { passive: false });
+
+    window.addEventListener("DOMContentLoaded", calculateRoute);
+    calculateRoute();
+  </script>
+</body>
+</html>
