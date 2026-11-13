@@ -1799,7 +1799,48 @@
       e.preventDefault();
       adjustZoom(e.deltaY < 0 ? 1.12 : 0.88);
     }, { passive: false });
+// Mobile Touch Events (1-Finger Pan & 2-Finger Pinch Zoom)
+    let initialPinchDist = null;
+    let initialScale = 1;
 
+    function getTouchDistance(touches) {
+      return Math.hypot(
+        touches[0].clientX - touches[1].clientX,
+        touches[0].clientY - touches[1].clientY
+      );
+    }
+
+    viewport.addEventListener("touchstart", (e) => {
+      if (e.target.closest(".zoom-toolbar")) return;
+      if (e.touches.length === 1) {
+        isPanning = true;
+        dragStartX = e.touches[0].clientX - panX;
+        dragStartY = e.touches[0].clientY - panY;
+      } else if (e.touches.length === 2) {
+        isPanning = false;
+        initialPinchDist = getTouchDistance(e.touches);
+        initialScale = scale;
+      }
+    }, { passive: false });
+
+    viewport.addEventListener("touchmove", (e) => {
+      if (e.target.closest(".zoom-toolbar")) return;
+      e.preventDefault();
+      if (e.touches.length === 1 && isPanning) {
+        panX = e.touches[0].clientX - dragStartX;
+        panY = e.touches[0].clientY - dragStartY;
+        updateTransform();
+      } else if (e.touches.length === 2 && initialPinchDist) {
+        const currentDist = getTouchDistance(e.touches);
+        scale = Math.min(Math.max(0.55, initialScale * (currentDist / initialPinchDist)), 3.2);
+        updateTransform();
+      }
+    }, { passive: false });
+
+    viewport.addEventListener("touchend", () => {
+      isPanning = false;
+      initialPinchDist = null;
+    });
     window.addEventListener("DOMContentLoaded", calculateRoute);
     calculateRoute();
   </script>
